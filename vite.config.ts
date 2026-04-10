@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: '/JSON-UI-Web-Editor/',
   root: '.',
   publicDir: 'public',
   build: {
