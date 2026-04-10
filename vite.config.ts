@@ -12,7 +12,6 @@ export default defineConfig({
     open: true,
   },
   optimizeDeps: {
-    // Monaco editor needs its workers bundled
     include: ['monaco-editor'],
   },
   worker: {

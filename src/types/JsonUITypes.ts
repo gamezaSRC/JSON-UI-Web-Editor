@@ -152,6 +152,7 @@ export interface BindingEntry {
   source_control_name?: string;
   source_property_name?: string;
   target_property_name?: string;
+  resolve_ancestor_scope?: boolean;
   resolve_sibling_scope?: boolean;
 }
 
@@ -540,6 +541,13 @@ export interface NinesliceConfig {
   bottom: number;
   left: number;
   right: number;
+}
+
+export interface PreviewBaseMount {
+  name: string;
+  files: Map<string, UIFileDefinition>;
+  globalVariables: GlobalVariables;
+  textures: Map<string, TextureAsset>;
 }
 
 /** A complete project */

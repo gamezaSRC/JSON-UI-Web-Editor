@@ -1,4 +1,4 @@
-/* ===== Reset & Base ===== */
+/*  Reset & Base  */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -38,7 +38,7 @@ html, body {
   background: var(--bg-primary);
 }
 
-/* ===== App Layout ===== */
+/*  App Layout  */
 #app {
   display: flex;
   flex-direction: column;
@@ -69,7 +69,7 @@ html, body {
   font-size: 11px;
 }
 
-/* ===== Panels ===== */
+/*  Panels  */
 .panel {
   overflow-y: auto;
   overflow-x: hidden;
@@ -124,7 +124,7 @@ html, body {
   display: block;
 }
 
-/* ===== Panel Headers ===== */
+/*  Panel Headers  */
 .panel-header {
   display: flex;
   align-items: center;
@@ -150,7 +150,7 @@ html, body {
   gap: 4px;
 }
 
-/* ===== File Tree ===== */
+/*  File Tree  */
 .file-tree {
   padding: 4px 0;
 }
@@ -257,7 +257,7 @@ html, body {
   margin-left: 8px;
 }
 
-/* ===== Buttons ===== */
+/*  Buttons  */
 .btn {
   padding: 5px 12px;
   border: 1px solid var(--border);
@@ -329,7 +329,7 @@ html, body {
   display: none;
 }
 
-/* ===== Toolbar ===== */
+/*  Toolbar  */
 .toolbar-content {
   display: flex;
   align-items: center;
@@ -397,7 +397,7 @@ html, body {
   margin-left: auto;
 }
 
-/* ===== Inspector ===== */
+/*  Inspector  */
 .inspector-empty {
   padding: 20px;
   text-align: center;
@@ -582,7 +582,7 @@ select.inspector-input {
   background: rgba(249, 226, 175, 0.05);
 }
 
-/* ===== Bindings Editor ===== */
+/*  Bindings Editor  */
 .bindings-editor {
   flex: 1;
   display: flex;
@@ -627,7 +627,7 @@ select.inspector-input {
   padding: 2px 4px;
 }
 
-/* ===== Visual Editor ===== */
+/*  Visual Editor  */
 .visual-empty, .visual-empty-file {
   display: flex;
   flex-direction: column;
@@ -667,7 +667,7 @@ select.inspector-input {
   flex: 1;
 }
 
-/* ===== Control Blocks ===== */
+/*  Control Blocks  */
 .control-block {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -767,7 +767,7 @@ select.inspector-input {
   margin-left: 8px;
 }
 
-/* ===== Global Variables Editor ===== */
+/*  Global Variables Editor  */
 .global-vars-editor {
   padding: 16px;
 }
@@ -776,7 +776,7 @@ select.inspector-input {
   margin-bottom: 12px;
 }
 
-/* ===== Raw JSON Editor ===== */
+/*  Raw JSON Editor  */
 .raw-json-editor {
   width: 100%;
   min-height: 300px;
@@ -800,7 +800,7 @@ select.inspector-input {
   gap: 8px;
 }
 
-/* ===== Modal ===== */
+/*  Modal  */
 #modal-overlay {
   position: fixed;
   inset: 0;
@@ -859,7 +859,7 @@ select.inspector-input {
   flex: 1;
 }
 
-/* ===== Toast ===== */
+/*  Toast  */
 #toast-container {
   position: fixed;
   top: 50px;
@@ -899,7 +899,7 @@ select.inspector-input {
   color: var(--bg-tertiary);
 }
 
-/* ===== Texture Manager ===== */
+/*  Texture Manager  */
 .texture-manager {
   min-width: 400px;
 }
@@ -985,7 +985,7 @@ select.inspector-input {
   border-top: 1px solid var(--border);
 }
 
-/* ===== Nineslice Editor ===== */
+/*  Nineslice Editor  */
 .nineslice-editor {
   display: flex;
   flex-direction: column;
@@ -1056,7 +1056,7 @@ select.inspector-input {
   justify-content: flex-end;
 }
 
-/* ===== Status Bar ===== */
+/*  Status Bar  */
 .status-content {
   display: flex;
   align-items: center;
@@ -1174,7 +1174,7 @@ select.inspector-input {
 .status-warning { color: var(--warning); }
 .status-error { color: var(--error); }
 
-/* ===== Scrollbar Styling ===== */
+/*  Scrollbar Styling  */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -1193,18 +1193,18 @@ select.inspector-input {
   background: var(--bg-selected);
 }
 
-/* ===== Code Editor Container ===== */
+/*  Code Editor Container  */
 #code-editor {
   position: relative;
 }
 
-/* ===== Drop Zone ===== */
+/*  Drop Zone  */
 .drop-active {
   outline: 2px dashed var(--accent);
   outline-offset: -4px;
 }
 
-/* ===== Visual Editor Split Layout ===== */
+/*  Visual Editor Split Layout  */
 #visual-editor.active {
   display: flex;
   flex-direction: column;
@@ -1245,7 +1245,7 @@ select.inspector-input {
   min-height: 0;
 }
 
-/* ── Left pane: block hierarchy ── */
+/*  Left pane: block hierarchy  */
 .visual-tree-pane {
   width: 320px;
   min-width: 180px;
@@ -1256,7 +1256,7 @@ select.inspector-input {
   overflow: hidden;
 }
 
-/* ── Resizable splitter handle ── */
+/*  Resizable splitter handle  */
 .visual-resizer {
   width: 5px;
   cursor: col-resize;
@@ -1290,6 +1290,154 @@ select.inspector-input {
   gap: 8px;
 }
 
+.preview-inline-select {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  font-size: 11px;
+  min-width: 102px;
+}
+
+.preview-inline-button {
+  padding: 3px 8px;
+}
+
+.preview-base-badge {
+  margin-left: auto;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  color: var(--success);
+  background: rgba(166, 227, 161, 0.12);
+  border: 1px solid rgba(166, 227, 161, 0.28);
+}
+
+.mock-data-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 560px;
+}
+
+.mock-data-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/*  Language Selector  */
+.toolbar-lang-select {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  font-size: 11px;
+  cursor: pointer;
+  outline: none;
+}
+.toolbar-lang-select:hover {
+  border-color: var(--accent);
+}
+
+/*  Interactive Preview  */
+.preview-ctrl {
+  cursor: pointer;
+}
+.preview-ctrl-selected {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: -1px;
+  z-index: 100 !important;
+}
+
+/*  Resize Handles  */
+.resize-handle {
+  position: absolute;
+  background: var(--accent);
+  border: 1px solid #fff;
+  border-radius: 1px;
+  z-index: 200;
+}
+.resize-nw, .resize-ne, .resize-sw, .resize-se {
+  width: 8px;
+  height: 8px;
+}
+.resize-n, .resize-s {
+  width: 8px;
+  height: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.resize-e, .resize-w {
+  width: 6px;
+  height: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.resize-nw { top: -4px; left: -4px; cursor: nwse-resize; }
+.resize-ne { top: -4px; right: -4px; cursor: nesw-resize; }
+.resize-sw { bottom: -4px; left: -4px; cursor: nesw-resize; }
+.resize-se { bottom: -4px; right: -4px; cursor: nwse-resize; }
+.resize-n  { top: -3px; cursor: ns-resize; }
+.resize-s  { bottom: -3px; cursor: ns-resize; }
+.resize-e  { right: -3px; cursor: ew-resize; }
+.resize-w  { left: -3px; cursor: ew-resize; }
+
+/*  3D Layer View  */
+.view3d-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 10px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+}
+
+.view3d-viewport {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0d0d1a 100%);
+  min-height: 400px;
+  perspective: 1200px;
+}
+
+.view3d-scene {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: none;
+  width: 480px;
+  height: 270px;
+}
+
+.view3d-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  border: 1px solid rgba(137, 180, 250, 0.15);
+  background: rgba(30, 30, 46, 0.35);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(137, 180, 250, 0.06);
+}
+
+.view3d-layer-label {
+  position: absolute;
+  bottom: 2px;
+  left: 4px;
+  font-size: 9px;
+  color: var(--accent);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1px 4px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
 .preview-toggle-label {
   display: flex;
   align-items: center;
@@ -1312,7 +1460,7 @@ select.inspector-input {
   padding: 6px 0;
 }
 
-/* ── Visibility toggles ── */
+/*  Visibility toggles  */
 .visibility-toggle {
   background: none;
   border: none;
@@ -1340,7 +1488,7 @@ select.inspector-input {
   text-decoration: line-through;
 }
 
-/* ── Right pane: live preview ── */
+/* Right pane: live preview */
 .visual-preview-pane {
   flex: 1;
   display: flex;
@@ -1499,4 +1647,3 @@ select.inspector-input {
 .preview-legend-item.label-item  { color: #cdd6f4; }
 .preview-legend-item.image-item  { color: var(--warning); }
 .preview-legend-item.button-item { color: var(--accent); }
-

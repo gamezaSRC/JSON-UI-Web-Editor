@@ -3,6 +3,7 @@ import type {
   UIControlProperties,
   UIControlChild,
   GlobalVariables,
+  PreviewBaseMount,
   UIDefsFile,
   TextureAsset,
   JsonUIProject,
@@ -25,6 +26,7 @@ export class ProjectError extends Error {
 /** Manages the JSON UI project state: files, textures, and operations */
 export class ProjectManager {
   private project: JsonUIProject;
+  private previewBase: PreviewBaseMount | null = null;
   private readonly events: EventBus;
   private dirty = false;
 
@@ -47,6 +49,14 @@ export class ProjectManager {
   /** Get the current project */
   getProject(): Readonly<JsonUIProject> {
     return this.project;
+  }
+
+  getPreviewBase(): Readonly<PreviewBaseMount> | null {
+    return this.previewBase;
+  }
+
+  hasPreviewBase(): boolean {
+    return this.previewBase !== null;
   }
 
   /** Check if project has unsaved changes */
@@ -80,24 +90,19 @@ export class ProjectManager {
       );
     }
 
-    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) 
       throw new ProjectError(
         `File "${filePath}" must be a JSON object`,
         'INVALID_STRUCTURE',
         'The root of a JSON UI file must be a {} object with a "namespace" key.'
       );
-    }
-
     const obj = parsed as Record<string, unknown>;
-
-    if (typeof obj['namespace'] !== 'string' || obj['namespace'].trim() === '') {
+    if (typeof obj['namespace'] !== 'string' || obj['namespace'].trim() === '')
       throw new ProjectError(
         `File "${filePath}" is missing a "namespace" property`,
         'MISSING_NAMESPACE',
         'Every JSON UI file must have a "namespace": "your_namespace" at the root.'
       );
-    }
-
     return obj as unknown as UIFileDefinition;
   }
 
@@ -112,9 +117,8 @@ export class ProjectManager {
 
   /** Remove a file from the project */
   removeFile(filePath: string): void {
-    if (!this.project.files.has(filePath)) {
+    if (!this.project.files.has(filePath)) 
       throw new ProjectError(`File "${filePath}" not found`, 'FILE_NOT_FOUND');
-    }
     this.project.files.delete(filePath);
     this.removeFromUIDefs(filePath);
     this.dirty = true;
@@ -135,9 +139,8 @@ export class ProjectManager {
   /** Rename a file */
   renameFile(oldPath: string, newPath: string): void {
     const file = this.project.files.get(oldPath);
-    if (!file) {
+    if (!file) 
       throw new ProjectError(`File "${oldPath}" not found`, 'FILE_NOT_FOUND');
-    }
     this.project.files.delete(oldPath);
     this.project.files.set(newPath, file);
     this.removeFromUIDefs(oldPath);
@@ -150,9 +153,8 @@ export class ProjectManager {
   /** Add a control to a file */
   addControl(filePath: string, controlName: string, control: UIControlProperties): void {
     const file = this.project.files.get(filePath);
-    if (!file) {
+    if (!file) 
       throw new ProjectError(`File "${filePath}" not found`, 'FILE_NOT_FOUND');
-    }
     (file as Record<string, unknown>)[controlName] = control;
     this.dirty = true;
     this.events.emit('control:created', { filePath, controlName });
@@ -162,9 +164,8 @@ export class ProjectManager {
   /** Update a control in a file */
   updateControl(filePath: string, controlName: string, control: UIControlProperties): void {
     const file = this.project.files.get(filePath);
-    if (!file) {
+    if (!file) 
       throw new ProjectError(`File "${filePath}" not found`, 'FILE_NOT_FOUND');
-    }
     (file as Record<string, unknown>)[controlName] = control;
     this.dirty = true;
     this.events.emit('control:updated', { filePath, controlName });
@@ -173,9 +174,8 @@ export class ProjectManager {
   /** Delete a control from a file */
   deleteControl(filePath: string, controlName: string): void {
     const file = this.project.files.get(filePath);
-    if (!file) {
+    if (!file) 
       throw new ProjectError(`File "${filePath}" not found`, 'FILE_NOT_FOUND');
-    }
     delete (file as Record<string, unknown>)[controlName];
     this.dirty = true;
     this.events.emit('control:deleted', { filePath, controlName });
@@ -207,6 +207,28 @@ export class ProjectManager {
   /** Get global variables */
   getGlobalVariables(): GlobalVariables {
     return this.project.globalVariables;
+  }
+
+  setPreviewBase(previewBase: PreviewBaseMount): void {
+    this.previewBase = previewBase;
+    this.events.emit('preview-base:changed', {
+      mounted: true,
+      name: previewBase.name,
+      fileCount: previewBase.files.size,
+      textureCount: previewBase.textures.size,
+    });
+    this.events.emit('tree:refresh');
+  }
+
+  clearPreviewBase(): void {
+    this.previewBase = null;
+    this.events.emit('preview-base:changed', {
+      mounted: false,
+      name: null,
+      fileCount: 0,
+      textureCount: 0,
+    });
+    this.events.emit('tree:refresh');
   }
 
   /** Get UI defs */
@@ -270,15 +292,13 @@ export class ProjectManager {
   }
 
   private addToUIDefs(filePath: string): void {
-    if (!this.project.uiDefs.ui_defs.includes(filePath)) {
+    if (!this.project.uiDefs.ui_defs.includes(filePath)) 
       this.project.uiDefs.ui_defs.push(filePath);
-    }
   }
 
   private removeFromUIDefs(filePath: string): void {
     const idx = this.project.uiDefs.ui_defs.indexOf(filePath);
-    if (idx !== -1) {
+    if (idx !== -1) 
       this.project.uiDefs.ui_defs.splice(idx, 1);
-    }
   }
 }

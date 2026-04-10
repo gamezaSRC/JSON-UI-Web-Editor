@@ -17,8 +17,7 @@ function stripJsoncComments(src: string): string {
 
   while (i < len) {
     const ch = src[i];
-
-    // ── String literal: copy verbatim preserving escapes ──────────────────
+    // String literal: copy verbatim preserving escapes
     if (ch === '"') {
       out += ch;
       i++;
@@ -36,13 +35,13 @@ function stripJsoncComments(src: string): string {
       continue;
     }
 
-    // ── Single-line comment ────────────────────────────────────────────────
+    // Single-line comment
     if (ch === '/' && i + 1 < len && src[i + 1] === '/') {
       while (i < len && src[i] !== '\n') i++;
       continue;
     }
 
-    // ── Block comment ──────────────────────────────────────────────────────
+    // Block comment
     if (ch === '/' && i + 1 < len && src[i + 1] === '*') {
       i += 2;
       while (i + 1 < len && !(src[i] === '*' && src[i + 1] === '/')) i++;

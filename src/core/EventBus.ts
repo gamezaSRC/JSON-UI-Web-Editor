@@ -15,6 +15,7 @@ export type EventMap = {
   'texture:added': { textureId: string };
   'texture:removed': { textureId: string };
   'texture:updated': { textureId: string };
+  'preview-base:changed': { mounted: boolean; name: string | null; fileCount: number; textureCount: number };
   'editor:mode-changed': { mode: 'visual' | 'code' };
   'inspector:refresh': undefined;
   'tree:refresh': undefined;
@@ -30,9 +31,8 @@ export class EventBus {
 
   /** Subscribe to an event */
   on<K extends EventKey>(event: K, handler: EventHandler<K>): () => void {
-    if (!this.listeners.has(event)) {
+    if (!this.listeners.has(event)) 
       this.listeners.set(event, new Set());
-    }
     const handlers = this.listeners.get(event)!;
     handlers.add(handler as EventHandler<EventKey>);
     return () => handlers.delete(handler as EventHandler<EventKey>);
