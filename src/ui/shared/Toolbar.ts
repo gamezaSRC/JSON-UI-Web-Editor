@@ -10,6 +10,7 @@ import type { LangCode } from '../../core/i18n';
 export class Toolbar {
   private readonly container: HTMLElement;
   private currentMode: 'visual' | 'code' = 'visual';
+  private currentTab: 'editor' | 'formbuilder' = 'editor';
 
   constructor(
     containerId: string,
@@ -35,6 +36,18 @@ export class Toolbar {
         el('div', { className: 'toolbar-brand' },
           el('span', { className: 'toolbar-logo' }, '▣'),
           el('span', { className: 'toolbar-title' }, t('toolbar.title'))
+        ),
+
+        // App tabs: Editor | Form Builder
+        el('div', { className: 'toolbar-group' },
+          el('button', {
+            className: `app-tab-btn${this.currentTab === 'editor' ? ' active' : ''}`,
+            onclick: () => this.setTab('editor'),
+          }, '🛠 Editor'),
+          el('button', {
+            className: `app-tab-btn${this.currentTab === 'formbuilder' ? ' active' : ''}`,
+            onclick: () => this.setTab('formbuilder'),
+          }, 'Form Builder'),
         ),
 
         // File actions
@@ -143,6 +156,12 @@ export class Toolbar {
   private setMode(mode: 'visual' | 'code'): void {
     this.currentMode = mode;
     this.events.emit('editor:mode-changed', { mode });
+    this.render();
+  }
+
+  private setTab(tab: 'editor' | 'formbuilder'): void {
+    this.currentTab = tab;
+    this.events.emit('app:tab-changed', { tab });
     this.render();
   }
 

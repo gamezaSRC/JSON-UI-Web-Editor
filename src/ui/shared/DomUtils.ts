@@ -15,6 +15,9 @@ export function el<K extends keyof HTMLElementTagNameMap>(
         element.className = value;
       } else if (key.startsWith('on') && typeof value === 'function') {
         element.addEventListener(key.slice(2), value as EventListener);
+      } else if (key === 'value' && value !== undefined && value !== null) {
+        // Set value as DOM property (not attribute) for input/textarea/select
+        (element as HTMLInputElement).value = String(value);
       } else if (typeof value === 'boolean') {
         if (value) element.setAttribute(key, '');
         else element.removeAttribute(key);
@@ -56,12 +59,9 @@ export function showToast(message: string, type: 'info' | 'warning' | 'error' = 
     container.id = 'toast-container';
     document.body.appendChild(container);
   }
-
   const toast = el('div', { className: `toast toast-${type}` }, message);
   container.appendChild(toast);
-
   requestAnimationFrame(() => toast.classList.add('show'));
-
   setTimeout(() => {
     toast.classList.remove('show');
     setTimeout(() => toast.remove(), 300);
@@ -73,7 +73,6 @@ export function showModal(title: string, content: HTMLElement, onClose?: () => v
   const overlay = getRequiredElement('modal-overlay');
   clearElement(overlay);
   overlay.classList.remove('hidden');
-
   const dialog = el('div', { className: 'modal-dialog' },
     el('div', { className: 'modal-header' },
       el('h3', {}, title),
@@ -84,9 +83,9 @@ export function showModal(title: string, content: HTMLElement, onClose?: () => v
 
   overlay.appendChild(dialog);
   overlay.onclick = (e) => {
-    if (e.target === overlay) closeModal(onClose);
+    if (e.target === overlay) 
+      closeModal(onClose);
   };
-
   return dialog;
 }
 

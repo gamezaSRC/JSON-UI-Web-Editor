@@ -17,6 +17,7 @@ export type EventMap = {
   'texture:updated': { textureId: string };
   'preview-base:changed': { mounted: boolean; name: string | null; fileCount: number; textureCount: number };
   'editor:mode-changed': { mode: 'visual' | 'code' };
+  'app:tab-changed': { tab: 'editor' | 'formbuilder' };
   'inspector:refresh': undefined;
   'tree:refresh': undefined;
   'status:message': { text: string; type: 'info' | 'warning' | 'error' };

@@ -113,6 +113,14 @@ export class FileTreePanel {
       el('span', { className: 'file-name' }, fileName),
       el('button', {
         className: 'icon-btn small',
+        title: 'Rename File',
+        onclick: (e: Event) => {
+          e.stopPropagation();
+          this.handleRenameFile(filePath);
+        }
+      }, '✎'),
+      el('button', {
+        className: 'icon-btn small',
         title: 'Add Control',
         onclick: (e: Event) => {
           e.stopPropagation();
@@ -246,6 +254,58 @@ export class FileTreePanel {
       }
     } catch (err) {
       showToast(err instanceof Error ? err.message : String(err), 'error');
+    }
+  }
+
+  private handleRenameFile(filePath: string): void {
+    const oldName = filePath.split('/').pop() ?? filePath;
+    const newName = prompt('New file name:', oldName);
+    if (!newName || newName === oldName) return;
+    const normalizedNew = newName.endsWith('.json') ? newName : newName + '.json';
+    const dir = filePath.includes('/') ? filePath.substring(0, filePath.lastIndexOf('/') + 1) : '';
+    const newPath = dir + normalizedNew;
+    try {
+      // Also offer to rename namespace
+      const file = this.projectManager.getFile(filePath);
+      if (file) {
+        const oldNamespace = (file as Record<string, unknown>)['namespace'] as string;
+        const suggestedNs = normalizedNew.replace(/\.json$/, '').replace(/[^a-z0-9_]/gi, '_').toLowerCase();
+        const newNamespace = prompt('New namespace:', suggestedNs);
+        if (newNamespace && newNamespace !== oldNamespace) {
+          this.updateNamespaceReferences(oldNamespace, newNamespace);
+          (file as Record<string, unknown>)['namespace'] = newNamespace;
+        }
+      }
+      this.projectManager.renameFile(filePath, newPath);
+      if (this.selectedFile === filePath) {
+        this.selectedFile = newPath;
+        this.events.emit('file:selected', { filePath: newPath });
+      }
+      showToast(`Renamed to ${newPath}`, 'info');
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : String(err), 'error');
+    }
+  }
+
+  /** Update references to old namespace across all project files */
+  private updateNamespaceReferences(oldNs: string, newNs: string): void {
+    const files = this.projectManager.getFilePaths();
+    for (const fp of files) {
+      const file = this.projectManager.getFile(fp);
+      if (!file) continue;
+      const json = JSON.stringify(file);
+      // Replace namespace references like "oldNs.control_name" with "newNs.control_name"
+      const updated = json.replace(
+        new RegExp(`(?<="|\\/|@)${oldNs}\\.`, 'g'),
+        `${newNs}.`
+      );
+      if (updated !== json) {
+        const parsed = JSON.parse(updated);
+        const controls = Object.keys(parsed).filter(k => k !== 'namespace');
+        for (const ctrl of controls) {
+          this.projectManager.updateControl(fp, ctrl, parsed[ctrl]);
+        }
+      }
     }
   }
 

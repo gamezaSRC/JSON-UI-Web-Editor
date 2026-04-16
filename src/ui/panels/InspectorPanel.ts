@@ -391,6 +391,7 @@ export class InspectorPanel {
 
   /** Render the inspector */
   render(): void {
+    const scrollTop = this.container.scrollTop;
     clearElement(this.container);
     const header = el('div', { className: 'panel-header' },
       el('span', { className: 'panel-title' }, t('inspector.title'))
@@ -514,6 +515,10 @@ export class InspectorPanel {
         }, 'Add Property')
       )
     );
+    // Restore scroll position after re-render
+    requestAnimationFrame(() => {
+      this.container.scrollTop = scrollTop;
+    });
   }
 
   private renderProperty(prop: PropertyMeta, control: UIControlProperties): HTMLElement {
@@ -598,21 +603,49 @@ export class InspectorPanel {
     });
   }
 
-  private createBooleanInput(key: string, value: boolean | undefined): HTMLElement {
+  private createBooleanInput(key: string, value: boolean | string | undefined): HTMLElement {
     const container = el('div', { className: 'bool-input' });
-    const select = el('select', {
-      className: 'inspector-input',
-      onchange: (e: Event) => {
-        const v = (e.target as HTMLSelectElement).value;
-        if (v === '') this.updateProperty(key, undefined);
-        else this.updateProperty(key, v === 'true');
-      }
-    },
-      el('option', { value: '', selected: value === undefined }, '--'),
-      el('option', { value: 'true', selected: value === true }, 'true'),
-      el('option', { value: 'false', selected: value === false }, 'false')
-    );
-    container.appendChild(select);
+    const isVariable = typeof value === 'string';
+
+    if (isVariable) {
+      container.appendChild(el('input', {
+        type: 'text',
+        value: value as string,
+        className: 'inspector-input',
+        placeholder: '$variable_name',
+        onchange: (e: Event) => {
+          const v = (e.target as HTMLInputElement).value.trim();
+          if (v === '' || v === 'true') this.updateProperty(key, v === '' ? undefined : true);
+          else if (v === 'false') this.updateProperty(key, false);
+          else this.updateProperty(key, v);
+        }
+      }));
+      container.appendChild(el('button', {
+        className: 'icon-btn small',
+        title: 'Switch to boolean',
+        onclick: () => { this.updateProperty(key, true); }
+      }, '⊘'));
+    } else {
+      const select = el('select', {
+        className: 'inspector-input',
+        onchange: (e: Event) => {
+          const v = (e.target as HTMLSelectElement).value;
+          if (v === '') this.updateProperty(key, undefined);
+          else this.updateProperty(key, v === 'true');
+        }
+      },
+        el('option', { value: '', selected: value === undefined }, '--'),
+        el('option', { value: 'true', selected: value === true }, 'true'),
+        el('option', { value: 'false', selected: value === false }, 'false')
+      );
+      container.appendChild(select);
+      container.appendChild(el('button', {
+        className: 'icon-btn small',
+        title: 'Use $variable',
+        onclick: () => { this.updateProperty(key, '$'); }
+      }, '$'));
+    }
+
     return container;
   }
 
@@ -875,7 +908,6 @@ export class InspectorPanel {
     if (!control.bindings) control.bindings = [];
     control.bindings.push({ binding_type: 'collection' });
     this.projectManager.updateControl(this.currentFile, this.currentControl, control);
-    this.render();
   }
 
   private removeBinding(index: number): void {
@@ -885,7 +917,6 @@ export class InspectorPanel {
     control.bindings.splice(index, 1);
     if (control.bindings.length === 0) delete control.bindings;
     this.projectManager.updateControl(this.currentFile, this.currentControl, control);
-    this.render();
   }
 
   private updateBinding(index: number, key: keyof BindingEntry, value: unknown): void {
@@ -927,7 +958,6 @@ export class InspectorPanel {
       delete (control as Record<string, unknown>)[key];
     } else (control as Record<string, unknown>)[key] = value;
     this.projectManager.updateControl(this.currentFile, this.currentControl, control);
-    this.render();
   }
 
   private renameControl(newName: string): void {

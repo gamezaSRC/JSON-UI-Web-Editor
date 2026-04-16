@@ -7,6 +7,7 @@
 import { EventBus } from './core/EventBus';
 import { ProjectManager } from './core/ProjectManager';
 import { ImportExportManager } from './core/ImportExportManager';
+import { UndoManager } from './core/UndoManager';
 import { FileTreePanel } from './ui/panels/FileTreePanel';
 import { InspectorPanel } from './ui/panels/InspectorPanel';
 import { VisualEditor } from './ui/preview/VisualEditor';
@@ -14,15 +15,19 @@ import { CodeEditorPanel } from './ui/panels/CodeEditorPanel';
 import { TextureManager } from './ui/shared/TextureManager';
 import { Toolbar } from './ui/shared/Toolbar';
 import { StatusBar } from './ui/shared/StatusBar';
+import { FormBuilder } from './ui/formbuilder/FormBuilder';
+import { showToast } from './ui/shared/DomUtils';
 
 class JsonUIApp {
   private readonly events = new EventBus();
   private readonly projectManager = new ProjectManager(this.events);
   private readonly importExport = new ImportExportManager(this.projectManager, this.events);
   private readonly textureManager = new TextureManager(this.projectManager, this.events);
+  private undoManager!: UndoManager;
   private fileTree!: FileTreePanel;
   private visualEditor!: VisualEditor;
   private codeEditor!: CodeEditorPanel;
+  private formBuilder!: FormBuilder;
 
   /** Bootstrap the application */
   init(): void {
@@ -32,6 +37,7 @@ class JsonUIApp {
     this.codeEditor = new CodeEditorPanel('code-editor', this.projectManager, this.events);
     new Toolbar('toolbar', this.projectManager, this.events, this.importExport, this.textureManager);
     new StatusBar('status-bar', this.projectManager, this.events);
+    this.formBuilder = new FormBuilder('form-builder-workspace');
     this.codeEditor.init();
     this.codeEditor.setVisible(false);
     this.events.on('editor:mode-changed', (data) => {
@@ -50,6 +56,22 @@ class JsonUIApp {
       }
     });
 
+    // Tab switching between Editor and Form Builder
+    this.events.on('app:tab-changed', (data) => {
+      if (!data) return;
+      const workspace = document.getElementById('workspace');
+      const fbWorkspace = document.getElementById('form-builder-workspace');
+      if (!workspace || !fbWorkspace) return;
+      if (data.tab === 'editor') {
+        workspace.classList.add('active');
+        fbWorkspace.classList.remove('active');
+      } else {
+        workspace.classList.remove('active');
+        fbWorkspace.classList.add('active');
+        this.formBuilder.render();
+      }
+    });
+
     // Warn before leaving with unsaved changes
     window.addEventListener('beforeunload', (e) => {
       if (this.projectManager.isDirty()) {
@@ -64,7 +86,22 @@ class JsonUIApp {
         e.preventDefault();
         this.importExport.exportProject();
       }
+      // Ctrl+Z Undo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        if (this.undoManager.undo()) {
+          showToast('Undo', 'info');
+        }
+      }
+      // Ctrl+Y or Ctrl+Shift+Z Redo
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+        e.preventDefault();
+        if (this.undoManager.redo()) {
+          showToast('Redo', 'info');
+        }
+      }
     });
+    this.undoManager = new UndoManager(this.projectManager, this.events);
     this.fileTree.render();
     this.visualEditor.render();
     this.setupWorkspaceResizers();
